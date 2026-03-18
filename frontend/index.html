@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Dependency Mapper</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<h2>Application Dependency Mapper</h2>
+
+<!-- Add Dependency -->
+<div>
+  <input id="source" placeholder="Source (e.g. Frontend)">
+  <input id="target" placeholder="Target (e.g. Backend)">
+  <button onclick="addDependency()">Add Dependency</button>
+</div>
+
+<br>
+
+<!-- Clear Button -->
+<button onclick="clearAll()">Clear All</button>
+
+<!-- Display List -->
+<ul id="list"></ul>
+
+<br>
+
+<!-- Impact Analysis -->
+<input id="impactService" placeholder="Enter service (e.g. Backend)">
+<button onclick="findImpact()">Check Impact</button>
+
+<script src="script.js"></script>
+
+</body>
+</html>
