@@ -7,29 +7,21 @@
 <body>
 
 <h2>Application Dependency Mapper</h2>
-
-<!-- Add Dependency -->
 <div>
-  <input id="source" placeholder="Source (e.g. Frontend)">
-  <input id="target" placeholder="Target (e.g. Backend)">
+  <input id="source" placeholder="Source Service">
+  <input id="target" placeholder="Target Service">
   <button onclick="addDependency()">Add Dependency</button>
 </div>
 
-<br>
-
-<!-- Clear Button -->
+<button onclick="loadDependencies()">Show Dependencies</button>
 <button onclick="clearAll()">Clear All</button>
 
-<!-- Display List -->
 <ul id="list"></ul>
 
-<br>
-
-<!-- Impact Analysis -->
-<input id="impactService" placeholder="Enter service (e.g. Backend)">
+<h3>Check Impact</h3>
+<input id="impactService" placeholder="Enter service">
 <button onclick="findImpact()">Check Impact</button>
 
 <script src="script.js"></script>
-
 </body>
 </html>

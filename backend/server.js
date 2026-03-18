@@ -1,40 +1,43 @@
 const express = require("express");
-const fs = require("fs");
 const cors = require("cors");
 
 const app = express();
 app.use(express.json());
 app.use(cors());
 
-const FILE = "data.json";
-
-// Get all dependencies
-app.get("/dependencies", (req, res) => {
-    const data = JSON.parse(fs.readFileSync(FILE));
-    res.json(data);
-});
+let dependencies = [];
 
 // Add dependency
 app.post("/add", (req, res) => {
     const { source, target } = req.body;
-
-    let data = JSON.parse(fs.readFileSync(FILE));
-    data.push({ source, target });
-
-    fs.writeFileSync(FILE, JSON.stringify(data, null, 2));
-    res.send("Dependency added");
+    dependencies.push({ source, target });
+    res.json({ message: "Added successfully" });
 });
 
-// Impact analysis
+// Get all dependencies
+app.get("/all", (req, res) => {
+    res.json(dependencies);
+});
+
+// 🔥 Chain Impact Logic (IMPORTANT)
 app.get("/impact/:service", (req, res) => {
     const service = req.params.service;
-    const data = JSON.parse(fs.readFileSync(FILE));
+    let visited = new Set();
 
-    let impacted = data
-        .filter(d => d.source === service)
-        .map(d => d.target);
+    function dfs(current) {
+        dependencies.forEach(dep => {
+            if (dep.source === current && !visited.has(dep.target)) {
+                visited.add(dep.target);
+                dfs(dep.target);
+            }
+        });
+    }
 
-    res.json({ service, impacted });
+    dfs(service);
+
+    res.json({ impacted: Array.from(visited) });
 });
 
-app.listen(5000, () => console.log("Server running on port 5000"));
+app.listen(5000, () => {
+    console.log("Server running on http://localhost:5000");
+});

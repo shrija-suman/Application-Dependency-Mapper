@@ -1,46 +1,54 @@
 const API = "http://localhost:5000";
 
-// ➕ Add dependency
-function addDependency() {
+// Add dependency
+async function addDependency() {
     const source = document.getElementById("source").value;
     const target = document.getElementById("target").value;
 
-    fetch(`${API}/add`, {
+    if (!source || !target) {
+        alert("Enter both fields");
+        return;
+    }
+
+    await fetch(API + "/add", {
         method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ source, target })
-    })
-    .then(() => loadDependencies());
+    });
+
+    loadDependencies();
 }
 
-// 📋 Load from backend
-function loadDependencies() {
-    fetch(`${API}/dependencies`)
-        .then(res => res.json())
-        .then(data => {
-            const list = document.getElementById("list");
-            list.innerHTML = "";
+// Show dependencies
+async function loadDependencies() {
+    const res = await fetch(API + "/all");
+    const data = await res.json();
 
-            data.forEach(dep => {
-                const li = document.createElement("li");
-                li.textContent = `${dep.source} → ${dep.target}`;
-                list.appendChild(li);
-            });
-        });
+    const list = document.getElementById("list");
+    list.innerHTML = "";
+
+    data.forEach(dep => {
+        const li = document.createElement("li");
+        li.textContent = `${dep.source} → ${dep.target}`;
+        list.appendChild(li);
+    });
 }
 
-// 🔥 Impact Analysis (from backend)
-function findImpact() {
+// Clear all (frontend only)
+function clearAll() {
+    document.getElementById("list").innerHTML = "";
+}
+
+// 🔥 Chain Impact (calls backend)
+async function findImpact() {
     const service = document.getElementById("impactService").value;
 
-    fetch(`${API}/impact/${service}`)
-        .then(res => res.json())
-        .then(data => {
-            alert(`If ${data.service} fails, it affects: ${data.impacted.join(", ")}`);
-        });
-}
+    const res = await fetch(API + "/impact/" + service);
+    const data = await res.json();
 
-// Load data on page start
-window.onload = loadDependencies;
+    if (data.impacted.length === 0) {
+        alert("No impacted services");
+    } else {
+        alert("Impacted: " + data.impacted.join(", "));
+    }
+}

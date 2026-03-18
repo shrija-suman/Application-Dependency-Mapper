@@ -1,1 +1,22 @@
-[]
+[
+  {
+    "source": "frontend",
+    "target": "API Gateway"
+  },
+  {
+    "source": "frontend",
+    "target": "API Gateway"
+  },
+  {
+    "source": "backend",
+    "target": "database"
+  },
+  {
+    "source": "frontend",
+    "target": "API Gateway"
+  },
+  {
+    "source": "api gateway",
+    "target": "backend"
+  }
+]

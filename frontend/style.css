@@ -1,13 +1,33 @@
 body {
-  font-family: Arial;
-  text-align: center;
+    font-family: Arial;
+    text-align: center;
+    background: linear-gradient(135deg, #0f2027, #2c5364, #00c9a7);
+    color: white;
 }
 
 input {
-  padding: 8px;
-  margin: 5px;
+    padding: 10px;
+    margin: 10px;
+    border-radius: 8px;
+    border: none;
 }
 
 button {
-  padding: 8px 15px;
+    padding: 10px 20px;
+    border-radius: 20px;
+    border: none;
+    background: #00c9a7;
+    color: white;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #00a387;
+}
+
+#list li {
+    background: rgba(255,255,255,0.2);
+    margin: 8px;
+    padding: 10px;
+    border-radius: 10px;
 }
