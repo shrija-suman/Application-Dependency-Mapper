@@ -19,4 +19,8 @@ function displayDependencies() {
         li.textContent = `${dep.source} → ${dep.target}`;
         list.appendChild(li);
     });
+    function clearAll() {
+    dependencies = [];
+    displayDependencies();
+}
 }
