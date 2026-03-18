@@ -1,6 +1,6 @@
 # Application Dependency Mapper
 
-Student Name: Shrija  
+Name: Shrija  
 Course: DevOps  
 Project Type: Monitoring & Analysis Tool  
 
