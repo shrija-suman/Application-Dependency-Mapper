@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Dependency Mapper</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<h2>Application Dependency Mapper</h2>
+<div>
+  <input id="source" placeholder="Source Service">
+  <input id="target" placeholder="Target Service">
+  <button onclick="addDependency()">Add Dependency</button>
+</div>
+
+<button onclick="loadDependencies()">Show Dependencies</button>
+<button onclick="clearAll()">Clear All</button>
+
+<ul id="list"></ul>
+
+<h3>Check Impact</h3>
+<input id="impactService" placeholder="Enter service">
+<button onclick="findImpact()">Check Impact</button>
+
+<script src="script.js"></script>
+</body>
+</html>
