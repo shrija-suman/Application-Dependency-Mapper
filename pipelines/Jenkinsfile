@@ -1,0 +1,23 @@
+# Jenkins Pipeline for Application Dependency Mapper
+
+pipeline {
+    agent any
+
+    stages {
+        stage('Build') {
+            steps {
+                sh 'cd src/main/backend && npm install'
+            }
+        }
+        stage('Test') {
+            steps {
+                sh 'cd tests/unit && npm test'
+            }
+        }
+        stage('Deploy') {
+            steps {
+                sh 'echo "Deploying..."'
+            }
+        }
+    }
+}

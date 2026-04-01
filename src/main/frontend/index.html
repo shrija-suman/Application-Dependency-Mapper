@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Application Dependency Mapper</title>
+  <script type="text/javascript" src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
+  <style>
+    body { font-family: Arial, sans-serif; background: #f9f9f9; padding: 20px; margin: 0; }
+    h1 { text-align: center; color: #333; margin-bottom: 10px; }
+    #network { width: 100%; height: 70vh; border: 1px solid #ccc; background: #fff; }
+    #form-container { margin-top: 20px; text-align: center; }
+    input { margin: 5px; padding: 5px; width: 150px; }
+    button { padding: 5px 10px; cursor: pointer; }
+    #legend { margin-top: 10px; text-align: center; }
+  </style>
+</head>
+<body>
+  <h1>Application Dependency Dashboard</h1>
+
+  <!-- Graph Section -->
+  <div id="network"></div>
+
+  <!-- Add New Dependency Form -->
+  <div id="form-container">
+    <h3>Add New Dependency</h3>
+    <input type="text" id="name" placeholder="Name" />
+    <input type="text" id="type" placeholder="Type (UI/Service/DB)" />
+    <input type="text" id="dependsOn" placeholder="Depends On (comma-separated)" />
+    <button onclick="addDependency()">Add</button>
+  </div>
+
+  <!-- Color Legend -->
+  <div id="legend">
+    <strong>Legend:</strong>
+    <span style="color:#FFB6C1;">■ UI</span>
+    <span style="color:#87CEFA;">■ Service</span>
+    <span style="color:#90EE90;">■ DB</span>
+  </div>
+
+  <script>
+    async function fetchDependencies() {
+      const res = await fetch('/dependencies');
+      return res.json();
+    }
+
+    async function drawNetwork() {
+      const data = await fetchDependencies();
+
+      const nodes = data.map((d, i) => {
+        let color = d.type === "UI" ? "#FFB6C1" : d.type === "Service" ? "#87CEFA" : "#90EE90";
+        return { id: i, label: d.name, color };
+      });
+
+      const edges = [];
+      data.forEach((d, i) => {
+        d.dependsOn.forEach(dep => {
+          const targetIndex = data.findIndex(item => item.name === dep);
+          if (targetIndex !== -1) edges.push({ from: i, to: targetIndex });
+        });
+      });
+
+      const container = document.getElementById('network');
+      new vis.Network(container, { nodes, edges }, {
+        nodes: { shape: "box", font: { size: 16, color: "#333" } },
+        edges: { arrows: "to", color: "#555" },
+        layout: { improvedLayout: true },
+        physics: { stabilization: false }
+      });
+    }
+
+    async function addDependency() {
+      const name = document.getElementById('name').value.trim();
+      const type = document.getElementById('type').value.trim();
+      const dependsOn = document.getElementById('dependsOn').value
+                          .split(',')
+                          .map(d => d.trim())
+                          .filter(d => d);
+
+      if (!name || !type) {
+        alert('Please fill all fields');
+        return;
+      }
+
+      const res = await fetch('/dependencies', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, type, dependsOn })
+      });
+
+      const data = await res.json();
+      alert(data.message);
+
+      drawNetwork();
+
+      document.getElementById('name').value = '';
+      document.getElementById('type').value = '';
+      document.getElementById('dependsOn').value = '';
+    }
+
+    drawNetwork();
+  </script>
+</body>
+</html>

@@ -1,0 +1,11 @@
+version: '3.8'
+
+services:
+  backend:
+    build: .
+    ports:
+      - "8080:8080"
+    volumes:
+      - ../../src/main/backend:/app
+    environment:
+      - NODE_ENV=development

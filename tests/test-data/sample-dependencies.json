@@ -1,0 +1,7 @@
+{
+  "frontend": ["backend", "ui-library"],
+  "backend": ["database", "auth-service"],
+  "database": [],
+  "auth-service": ["database"],
+  "ui-library": []
+}

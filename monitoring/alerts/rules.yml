@@ -1,0 +1,13 @@
+# Prometheus Alert Rules for Application Dependency Mapper
+
+groups:
+- name: dependency-mapper
+  rules:
+  - alert: DependencyMapperDown
+    expr: up{job="dependency-mapper"} == 0
+    for: 5m
+    labels:
+      severity: critical
+    annotations:
+      summary: "Dependency Mapper is down"
+      description: "Dependency Mapper has been down for more than 5 minutes."

@@ -1,0 +1,21 @@
+# Grafana Dashboard JSON for Application Dependency Mapper
+
+{
+  "dashboard": {
+    "title": "Application Dependency Mapper",
+    "tags": ["dependency", "mapper"],
+    "timezone": "browser",
+    "panels": [
+      {
+        "title": "Server Status",
+        "type": "stat",
+        "targets": [
+          {
+            "expr": "up{job=\"dependency-mapper\"}",
+            "legendFormat": "__auto"
+          }
+        ]
+      }
+    ]
+  }
+}

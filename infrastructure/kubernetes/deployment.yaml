@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dependency-mapper
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: dependency-mapper
+  template:
+    metadata:
+      labels:
+        app: dependency-mapper
+    spec:
+      containers:
+      - name: backend
+        image: dependency-mapper:latest
+        ports:
+        - containerPort: 8080
