@@ -55,7 +55,7 @@ Please read CONTRIBUTING.md for details on our code of conduct and the process f
 
 This project is licensed under the MIT License - see the LICENSE file for details.
 =======
-Name: Shrija  
+Name: Shrija Suman 
 Course: DevOps  
 Project Type: Monitoring & Analysis Tool  
 

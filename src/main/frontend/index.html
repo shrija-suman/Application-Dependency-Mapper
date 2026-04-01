@@ -3,33 +3,38 @@
 <head>
   <meta charset="UTF-8">
   <title>Application Dependency Mapper</title>
-  <script type="text/javascript" src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
+  <script src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
   <style>
-    body { font-family: Arial, sans-serif; background: #f9f9f9; padding: 20px; margin: 0; }
-    h1 { text-align: center; color: #333; margin-bottom: 10px; }
-    #network { width: 100%; height: 70vh; border: 1px solid #ccc; background: #fff; }
-    #form-container { margin-top: 20px; text-align: center; }
-    input { margin: 5px; padding: 5px; width: 150px; }
-    button { padding: 5px 10px; cursor: pointer; }
-    #legend { margin-top: 10px; text-align: center; }
+    body { font-family: Arial; margin:0; padding:20px; background:#f9f9f9; }
+    h1 { text-align:center; margin-bottom:10px; }
+    #network { width: 100%; height: 70vh; border:1px solid #ccc; background:#fff; }
+    #form-container { text-align:center; margin-top:20px; }
+    input { margin:5px; padding:5px; width:150px; }
+    button { padding:5px 10px; cursor:pointer; }
+    #legend { text-align:center; margin-top:10px; }
   </style>
 </head>
 <body>
   <h1>Application Dependency Dashboard</h1>
-
-  <!-- Graph Section -->
   <div id="network"></div>
 
-  <!-- Add New Dependency Form -->
+  <!-- Add -->
   <div id="form-container">
-    <h3>Add New Dependency</h3>
-    <input type="text" id="name" placeholder="Name" />
-    <input type="text" id="type" placeholder="Type (UI/Service/DB)" />
-    <input type="text" id="dependsOn" placeholder="Depends On (comma-separated)" />
+    <h3>Add Dependency</h3>
+    <input type="text" id="name" placeholder="Name">
+    <input type="text" id="type" placeholder="Type (UI/Service/DB)">
+    <input type="text" id="dependsOn" placeholder="Depends On (comma-separated)">
     <button onclick="addDependency()">Add</button>
   </div>
 
-  <!-- Color Legend -->
+  <!-- Delete -->
+  <!-- <div id="form-container">
+    <h3>Delete Dependency</h3>
+    <input type="text" id="deleteName" placeholder="Name to delete">
+    <button onclick="deleteDependency()">Delete</button>
+  </div> -->
+
+  <!-- Legend -->
   <div id="legend">
     <strong>Legend:</strong>
     <span style="color:#FFB6C1;">■ UI</span>
@@ -46,55 +51,46 @@
     async function drawNetwork() {
       const data = await fetchDependencies();
 
-      const nodes = data.map((d, i) => {
-        let color = d.type === "UI" ? "#FFB6C1" : d.type === "Service" ? "#87CEFA" : "#90EE90";
-        return { id: i, label: d.name, color };
-      });
+      const nodes = data.map((d,i)=>({
+        id:i, label:d.name,
+        color:d.type==="UI"? "#FFB6C1": d.type==="Service"? "#87CEFA":"#90EE90"
+      }));
 
-      const edges = [];
-      data.forEach((d, i) => {
-        d.dependsOn.forEach(dep => {
-          const targetIndex = data.findIndex(item => item.name === dep);
-          if (targetIndex !== -1) edges.push({ from: i, to: targetIndex });
+      const edges=[];
+      data.forEach((d,i)=>{
+        d.dependsOn.forEach(dep=>{
+          const target = data.findIndex(x=>x.name===dep);
+          if(target!==-1) edges.push({from:i,to:target});
         });
       });
 
       const container = document.getElementById('network');
-      new vis.Network(container, { nodes, edges }, {
-        nodes: { shape: "box", font: { size: 16, color: "#333" } },
-        edges: { arrows: "to", color: "#555" },
-        layout: { improvedLayout: true },
-        physics: { stabilization: false }
-      });
+      new vis.Network(container, {nodes,edges}, { nodes:{shape:"box"}, edges:{arrows:"to"}, layout:{improvedLayout:true}, physics:{stabilization:false}});
     }
 
     async function addDependency() {
       const name = document.getElementById('name').value.trim();
       const type = document.getElementById('type').value.trim();
-      const dependsOn = document.getElementById('dependsOn').value
-                          .split(',')
-                          .map(d => d.trim())
-                          .filter(d => d);
+      const dependsOn = document.getElementById('dependsOn').value.split(',').map(d=>d.trim()).filter(d=>d);
 
-      if (!name || !type) {
-        alert('Please fill all fields');
-        return;
-      }
+      if(!name||!type){ alert("Fill all fields"); return;}
 
-      const res = await fetch('/dependencies', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, type, dependsOn })
-      });
-
+      const res = await fetch('/dependencies', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({name,type,dependsOn})});
       const data = await res.json();
       alert(data.message);
-
       drawNetwork();
+      document.getElementById('name').value=''; document.getElementById('type').value=''; document.getElementById('dependsOn').value='';
+    }
 
-      document.getElementById('name').value = '';
-      document.getElementById('type').value = '';
-      document.getElementById('dependsOn').value = '';
+    async function deleteDependency() {
+      const name = document.getElementById('deleteName').value.trim();
+      if(!name){ alert("Enter name"); return; }
+
+      const res = await fetch(`/dependencies/${name}`, {method:'DELETE'});
+      const data = await res.json();
+      alert(data.message);
+      drawNetwork();
+      document.getElementById('deleteName').value='';
     }
 
     drawNetwork();
